@@ -814,6 +814,7 @@ namespace Etesian {
 
     int_t sliceHeight = getSliceHeight() / getHorizontalPitch();
     roughLegalize(sliceHeight, options);
+    // TODO: for uniform density distribution, add some margin to the cell sizes so we don't disrupt it during detailed placement
 
     for ( int i=0; i<iterations; ++i ){
         ostringstream label;
