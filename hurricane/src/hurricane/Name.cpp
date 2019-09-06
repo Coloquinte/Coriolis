@@ -119,18 +119,6 @@ Name& Name::operator=(const Name& name)
     return *this;
 }
 
-bool Name::operator==(const Name& name) const
-// ******************************************
-{
-    return (_sharedName == name._sharedName);
-}
-
-bool Name::operator!=(const Name& name) const
-// ******************************************
-{
-    return (_sharedName != name._sharedName);
-}
-
 bool Name::operator<(const Name& name) const
 // *****************************************
 {

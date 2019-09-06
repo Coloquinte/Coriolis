@@ -238,18 +238,28 @@ class Cell : public Entity {
         const Cell* _cell;
     };
 
-    class InstanceMap : public IntrusiveMap<Name, Instance> {
+    class InstanceMap final : public IntrusiveMap<Name, Instance> {
     // ****************************************************
+      public:
+        typedef IntrusiveMap<Name, Instance> Inherit;
 
-        public: typedef IntrusiveMap<Name, Instance> Inherit;
+        InstanceMap();
 
-        public: InstanceMap();
+        virtual Name _getKey(Instance* instance) const {
+          return instance->getName();
+        }
 
-        public: virtual Name _getKey(Instance* instance) const;
-        public: virtual unsigned _getHashValue(Name name) const;
-        public: virtual Instance* _getNextElement(Instance* instance) const;
-        public: virtual void _setNextElement(Instance* instance, Instance* nextInstance) const;
+        virtual unsigned _getHashValue(Name name) const {
+          return name._getSharedName()->getHash() / 8;
+        }
 
+        virtual Instance* _getNextElement(Instance* instance) const {
+          return instance->_getNextOfCellInstanceMap();
+        }
+
+        virtual void _setNextElement(Instance* instance, Instance* nextInstance) const {
+          instance->_setNextOfCellInstanceMap(nextInstance);
+        }
     };
 
     public: class SlaveInstanceSet : public IntrusiveSet<Instance> {
@@ -265,18 +275,42 @@ class Cell : public Entity {
 
     };
 
-    public: class NetMap : public IntrusiveMapConst<Name, Net> {
+    public: class NetMap final : public IntrusiveMapConst<Name, Net> {
     // *********************************************************
 
-        public: typedef IntrusiveMapConst<Name, Net> Inherit;
-    
-        public: NetMap();
+      public:
+        typedef IntrusiveMapConst<Name, Net> Inherit;
 
-        public: virtual const Name& _getKey(Net* net) const;
-        public: virtual unsigned _getHashValue(const Name& name) const;
-        public: virtual Net* _getNextElement(Net* net) const;
-        public: virtual void _setNextElement(Net* net, Net* nextNet) const;
+        NetMap();
 
+        virtual const Name& _getKey(Net* net) const {
+          return net->getName();
+        }
+
+        virtual unsigned _getHashValue(const Name& name) const {
+          unsigned long hash = 0;
+          unsigned long sum4 = 0;
+          const string& s = name._getSharedName()->_getSString();
+          for ( size_t i=0 ; i<s.size() ; ++i ) {
+            sum4 |= ((unsigned long)s[i]) << ((i%4) * 8);
+            if (i%4 == 3) {
+              hash += sum4;
+              sum4  = 0;
+            }
+          }
+          hash += sum4;
+
+          return hash;
+
+        }
+
+        virtual Net* _getNextElement(Net* net) const {
+          return net->_getNextOfCellNetMap();
+        }
+
+        virtual void _setNextElement(Net* net, Net* nextNet) const {
+          net->_setNextOfCellNetMap(nextNet);
+        }
     };
 
     class PinMap : public IntrusiveMap<Name, Pin> {

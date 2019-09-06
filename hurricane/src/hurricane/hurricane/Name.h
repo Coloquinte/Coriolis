@@ -22,6 +22,7 @@
 
 #include "hurricane/Commons.h"
 #include "hurricane/Names.h"
+#include "hurricane/SharedName.h"
 
 namespace Hurricane {
 
@@ -64,8 +65,8 @@ class Name {
 
     public: Name& operator=(const Name& name);
 
-    public: bool operator==(const Name& name) const;
-    public: bool operator!=(const Name& name) const;
+    public: bool operator==(const Name& name) const { return _sharedName == name._sharedName; }
+    public: bool operator!=(const Name& name) const { return _sharedName != name._sharedName; }
     public: bool operator<(const Name& name) const;
     public: bool operator<=(const Name& name) const;
     public: bool operator>(const Name& name) const;

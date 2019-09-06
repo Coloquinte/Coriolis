@@ -1519,32 +1519,6 @@ Cell::InstanceMap::InstanceMap()
 {
 }
 
-Name Cell::InstanceMap::_getKey(Instance* instance) const
-// ******************************************************
-{
-    return instance->getName();
-}
-
-unsigned int  Cell::InstanceMap::_getHashValue(Name name) const
-// *******************************************************
-{
-  return name._getSharedName()->getHash() / 8;
-}
-
-Instance* Cell::InstanceMap::_getNextElement(Instance* instance) const
-// *******************************************************************
-{
-    return instance->_getNextOfCellInstanceMap();
-}
-
-void Cell::InstanceMap::_setNextElement(Instance* instance, Instance* nextInstance) const
-// **************************************************************************************
-{
-    instance->_setNextOfCellInstanceMap(nextInstance);
-}
-
-
-
 // ****************************************************************************************************
 // Cell::SlaveInstanceSet implementation
 // ****************************************************************************************************
@@ -1584,45 +1558,6 @@ Cell::NetMap::NetMap()
 :    Inherit()
 {
 }
-
-const Name& Cell::NetMap::_getKey(Net* net) const
-// ***************************************
-{
-    return net->getName();
-}
-
-unsigned Cell::NetMap::_getHashValue(const Name& name) const
-// *********************************************************
-{
-  unsigned long hash = 0;
-  unsigned long sum4 = 0;
-  const string& s = name._getSharedName()->_getSString();
-  for ( size_t i=0 ; i<s.size() ; ++i ) {
-    sum4 |= ((unsigned long)s[i]) << ((i%4) * 8);
-    if (i%4 == 3) {
-      hash += sum4;
-      sum4  = 0;
-    }
-  }
-  hash += sum4;
-
-  return hash;
-  
-//return (unsigned int)name._getSharedName()->getId() / 8;
-}
-
-Net* Cell::NetMap::_getNextElement(Net* net) const
-// ***********************************************
-{
-    return net->_getNextOfCellNetMap();
-}
-
-void Cell::NetMap::_setNextElement(Net* net, Net* nextNet) const
-// *************************************************************
-{
-    net->_setNextOfCellNetMap(nextNet);
-}
-
 
 // ****************************************************************************************************
 // Cell::PinMap implementation
